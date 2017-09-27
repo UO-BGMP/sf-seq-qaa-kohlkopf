@@ -1,0 +1,15 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{bash}
+$ ssh -Y t1
+
+$ srun
+
+$ ml spider fastqc
+
+$ fastqc
+```
+

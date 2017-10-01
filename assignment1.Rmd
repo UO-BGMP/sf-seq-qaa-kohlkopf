@@ -1,15 +1,20 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: "Assignment 1 | 624 |"
+author: "Kohl Kinning"
+output: 
+  html_notebook: 
+    code_folding: none
+    theme: cosmo
+    toc: yes
 ---
 
-```{bash}
-$ ssh -Y t1
+## Part 1 --– SF-Seq read quality score distributions
 
-$ srun
+Kohl    10_2G_both      17_3E_fox
 
-$ ml spider fastqc
+The demultiplexed .fastq files are here: /projects/bgmp/2017_sequencing/demultiplexed/
 
-$ fastqc
-```
+*Using FastQC on Talapas, produce plots of quality score distributions for forward and reverse reads. Also, produce plots of the per-base N content, and comment on whether or not they are consistent with the quality score plots.*
+
+*Run your quality score plotting script from the index hopping assignment. Describe how the FastQC quality score distribution plots compare to your own. If different, propose an explanation. Also, does the runtime differ? If so, why?*
 

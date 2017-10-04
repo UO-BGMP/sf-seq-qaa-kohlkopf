@@ -2,4 +2,4 @@
 
 This assignment is due Wednesday, Oct 4 by 11:59 PM.
 
-Be sure to upload all relevant materials by the deadline and **double check** to be sure that your off-line repository is up-to-date with your on-line repository. Answers to the questions can be submitted as ```html```, Github markdown, or ```pdf```.
+All relevant materials have been uploaded by the deadline and I have **double checked** to be sure that my off-line repository is up-to-date with my on-line repository. Answers to the questions and plots are in assignment1.nb.html.

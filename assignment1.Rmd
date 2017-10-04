@@ -24,7 +24,9 @@ R1_10_2G = read.delim("/Users/kohl/Documents/GradSchool/semester2/GenomicsLab/As
 R2_10_2G = read.delim("/Users/kohl/Documents/GradSchool/semester2/GenomicsLab/Assignments/sf-seq-qaa-kohlkopf/Part_1/q2.out", header = TRUE, "\t")
 R1_17_3E = read.delim("/Users/kohl/Documents/GradSchool/semester2/GenomicsLab/Assignments/sf-seq-qaa-kohlkopf/Part_1/q3.out", header = TRUE, sep = "\t")
 R2_17_3E = read.delim("/Users/kohl/Documents/GradSchool/semester2/GenomicsLab/Assignments/sf-seq-qaa-kohlkopf/Part_1/q4.out", header = TRUE, sep = "\t")
+```
 
+```{r}
 plot(R1_10_2G$BPPosition, 
      R1_10_2G$MeanScore,
      type="n",
@@ -46,30 +48,33 @@ arrows(R1_10_2G$BPPosition,
        code=3)
 lines(R1_10_2G$BPPosition, R1_10_2G$MeanScore)
 axis(1, xaxp=c(0, 100, 20), las=2)
+```
 
-
+```{r}
 plot(R2_10_2G$BPPosition, 
      R2_10_2G$MeanScore, 
      type="n",
-     ylim = range(-100, 150),
+     ylim = range(0, 45),
      main = "10_2G_both R2 Read Quality",
      ylab = "Quality Score",
      xlab = "Base Position",
      xaxt = "n")
-rect(-4, 0, 104, 20, col = rgb(222, 177, 178, 100, maxColorValue = 255), border = NA)
+rect(-4, -4, 104, 20, col = rgb(222, 177, 178, 100, maxColorValue = 255), border = NA)
 rect(-4, 20, 104, 28, col = rgb(228, 214, 178, 100, maxColorValue = 255), border = NA)
-rect(-4, 28, 104, 40, col = rgb(183, 224, 178, 100, maxColorValue = 255), border = NA)
+rect(-4, 28, 104, 48, col = rgb(183, 224, 178, 100, maxColorValue = 255), border = NA)
 grid(NULL, 0)
 arrows(R2_10_2G$BPPosition, 
-       R2_10_2G$MeanScore-as.numeric(R2_10_2G$StDev), 
+       R2_10_2G$MeanScore-R2_10_2G$StDev, 
        R2_10_2G$BPPosition, 
-       R2_10_2G$MeanScore+as.numeric(R2_10_2G$StDev), 
+       R2_10_2G$MeanScore+R2_10_2G$StDev, 
        length=0.01, 
        angle=90, 
        code=3)
 lines(R2_10_2G$BPPosition, R2_10_2G$MeanScore)
 axis(1, xaxp=c(0, 100, 20), las=2)
+```
 
+```{r}
 plot(R1_17_3E$BPPosition, 
      R1_17_3E$MeanScore,
      type="n",
@@ -91,8 +96,9 @@ arrows(R1_17_3E$BPPosition,
        code=3)
 lines(R1_17_3E$BPPosition, R1_17_3E$MeanScore)
 axis(1, xaxp=c(0, 100, 20), las=2)
+```
 
-
+```{r}
 plot(R2_17_3E$BPPosition, 
      R2_17_3E$MeanScore,
      type="n",
@@ -114,7 +120,6 @@ arrows(R2_17_3E$BPPosition,
        code=3)
 lines(R2_17_3E$BPPosition, R2_17_3E$MeanScore)
 axis(1, xaxp=c(0, 100, 20), las=2)
-
 ```
 
 

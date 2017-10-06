@@ -17,7 +17,7 @@ Kohl    10_2G_both      17_3E_fox
 
 The demultiplexed .fastq files are here: /projects/bgmp/2017_sequencing/demultiplexed/
 
-1. *Using FastQC on Talapas, produce plots of quality score distributions for forward and reverse reads. Also, produce plots of the per-base N content, and comment on whether or not they are consistent with the quality score plots.*
+1. *Using FastQC on Talapas, produce plots of quality score distributions for forward and reverse reads. Also, produce plots of the per-base N content.*
 
 ### FastQC output
 
@@ -41,7 +41,8 @@ The demultiplexed .fastq files are here: /projects/bgmp/2017_sequencing/demultip
 ![](Part_1/17_3E_fox_R2.png)
 ![](Part_1/N_17_3E_fox_R2.png)
 
-2. *Run your quality score plotting script from the index hopping assignment. Describe how the FastQC quality score distribution plots compare to your own. If different, propose an explanation. Also, does the runtime differ? If so, why?*
+2. *Run your quality score plotting script from the index hopping assignment. Comment on whether or not the % N-content plots are consistent with the quality score plots. Describe how the FastQC quality score distribution plots compare to your own. If different, propose an explanation. Also, does the runtime differ? If so, why?*
++ The percent N-content across the bases plots demonstrate the highest percent N-content at the first base position for both reads, and undetectable N-content over the remaining positions. The plots generally agree. My script is a little more lenient with the quality scores. FastQC produced results far quicker than my script. FastQC was run with the multi-threading option which likely decreased the run time by orders of magnitude. 
 
 
 ```{r}
@@ -150,10 +151,10 @@ axis(1, xaxp=c(0, 100, 20), las=2)
 
 ## Part 2 | Adaptor trimming comparison
 
-3. *Look into the adaptor trimming options for ```cutadapt```, ```process_shortreads```, and ```Trimmomatic``` (all on Talapas), and briefly describe the differences. Pick one of these to properly trim adapter sequences. Use default settings. What proportion of reads (both forward and reverse) was trimmed?* *Sanity check: Use your Unix skills to search for the adapter sequences in your datasets and confirm the expected sequence orientations.*
-    + **cutadapt:** cutadapt removes adapter sequences from high-throughput sequencing reads. Replace "ADAPTER" with the actual sequence of your 3' adapter. IUPAC wildcard characters are supported. The reverse complement is *not* automatically searched. All reads from input.fastq will be written to output.fastq with the adapter sequence removed. Adapter matching is error-tolerant. Multiple adapter sequences can be given (use further -a options), but only the best-matching adapter will be removed. 
-    + **process_shortreads:** process_shortreads is part of the Stacks program. 
-    + **Trimmomatic:** trimmomatic is a program written in java. A particular strength of Trimmomatic is that it retains the pairing of reads. It provides four output files when trimming paired end reads: trimmed paired and unpaired for both forward and reverse reads.
+3. *Look into the adaptor trimming options for ```cutadapt```, ```process_shortreads```, and ```Trimmomatic``` (all on Talapas), and briefly describe the differences. Pick one of these to properly trim adapter sequences. Use default settings. What proportion of reads (both forward and reverse) was trimmed?*
+    + **cutadapt:** cutadapt is written in python. The reverse complement is *not* automatically searched. All reads from input.fastq are written to output.fastq with the adapter sequence removed. Adapter matching is error-tolerant. Multiple adapter sequences can be given (use further -a options), but only the best-matching adapter will be removed. 
+    + **process_shortreads:** process_shortreads is part of the Stacks program. It is written in C++ and Perl. Demultiplexing is supported. This program discards low quality reads unless their retention is specified as an option.
+    + **Trimmomatic:** trimmomatic is a program written in java. A particular strength of Trimmomatic is that it retains the pairing of reads. It provides four output files when trimming paired end reads: trimmed paired and unpaired for both forward and reverse reads. Demultiplexing is supported.
     
 ### Trimmomatic
 #### Commands
@@ -174,14 +175,15 @@ $ java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.36.jar PE ../17_3E_fox_S13_L008_R1_
 Trimmomatic stats reported. In addition to this information, four output files were created for 10_2G_both and four output files were created for 17_3E_fox.
 
 ##### 10_2G_both
-Using PrefixPair: 'GATCGGAAGAGCACACGTCTGAACTCCAGTCACNNNNNNNNATCTCGTATGCCGTCTTCTGCTTG' and 'GATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTNNNNNNNNGTGTAGATCTCGGTGGTCGCCGTATCATT'
+```{.bash}
+Using PrefixPair: "GATCGGAAGAGCACACGTCTGAACTCCAGTCACNNNNNNNNATCTCGTATGCCGTCTTCTGCTTG" and "GATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTNNNNNNNNGTGTAGATCTCGGTGGTCGCCGTATCATT"
 ILLUMINACLIP: Using 1 prefix pairs, 0 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences
 Input Read Pairs: 81477069 Both Surviving: 75242788 (92.35%) Forward Only Surviving: 5959764 (7.31%) Reverse Only Surviving: 152816 (0.19%) Dropped: 121701 (0.15%)
 TrimmomaticPE: Completed successfully
 ```
 ##### 17_3E_fox
 ```{.bash}
-Using PrefixPair: 'GATCGGAAGAGCACACGTCTGAACTCCAGTCACNNNNNNNNATCTCGTATGCCGTCTTCTGCTTG' and 'GATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTNNNNNNNNGTGTAGATCTCGGTGGTCGCCGTATCATT'
+Using PrefixPair: "GATCGGAAGAGCACACGTCTGAACTCCAGTCACNNNNNNNNATCTCGTATGCCGTCTTCTGCTTG" and "GATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTNNNNNNNNGTGTAGATCTCGGTGGTCGCCGTATCATT"
 ILLUMINACLIP: Using 1 prefix pairs, 0 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences
 Input Read Pairs: 11784410 Both Surviving: 11033098 (93.62%) Forward Only Surviving: 709636 (6.02%) Reverse Only Surviving: 25877 (0.22%) Dropped: 15799 (0.13%)
 TrimmomaticPE: Completed successfully
@@ -194,11 +196,11 @@ TrimmomaticPE: Completed successfully
 Return a list of read lengths for 10_2G_R1, 10_2G_R2, 17_3E_R1, and 17_3E_R2.
 
 ```{..bash}
-$ awk 'NR % 4 == 2' out_paired_10_2G_both_S8_L008_R1_001.fastq | awk '{print length}' |sort | uniq -c > 10_2G_R1_lengths.txt
-$ awk 'NR % 4 == 2' out_paired_10_2G_both_S8_L008_R2_001.fastq | awk '{print length}' |sort | uniq -c > 10_2G_R2_lengths.txt
+$ awk "NR % 4 == 2" out_paired_10_2G_both_S8_L008_R1_001.fastq | awk "{print length}" |sort | uniq -c > 10_2G_R1_lengths.txt
+$ awk "NR % 4 == 2" out_paired_10_2G_both_S8_L008_R2_001.fastq | awk "{print length}" |sort | uniq -c > 10_2G_R2_lengths.txt
 
-$ awk 'NR % 4 == 2' out_paired_17_3E_fox_S13_L008_R1_001.fastq  | awk '{print length}' |sort | uniq -c > 17_3E_R1_lengths.txt
-$ awk 'NR % 4 == 2' out_paired_17_3E_fox_S13_L008_R2_001.fastq  | awk '{print length}' |sort | uniq -c > 17_3E_R2_lengths.txt
+$ awk "NR % 4 == 2" out_paired_17_3E_fox_S13_L008_R1_001.fastq  | awk "{print length}" |sort | uniq -c > 17_3E_R1_lengths.txt
+$ awk "NR % 4 == 2" out_paired_17_3E_fox_S13_L008_R2_001.fastq  | awk "{print length}" |sort | uniq -c > 17_3E_R2_lengths.txt
 ```
 
 ```{r}
@@ -246,7 +248,7 @@ legend(35,9000000,
 
 
 5. *Briefly describe whether the adaptor trimming results are consistent with the insert size distributions for your libraries. The size distribution information is in the Fragment Analyzer trace file on Github.*
-+ The adapter trimming results are consistent witht he insert size distribution information produced by the fragment analyzer. 140 if it's just adapter-adapter, just insert is 250. Percentage of reads seen without adapters, corresponding to curve?
++ These results highlight that the differences in the read length distributions for both samples accounts for less than 1% of the total reads. Fragment analyzer traces show average library size was around 400bp for each sample. Adapter squences would only appear in the sequenced reads if fragments less than ~250bp were sequenced. Fragments of these sizes account for a very small proportion of the fragments as seen on the traces. It makes sense that only in a small fraction of the reads does adapter contamination occur.
 
 ## Part 3 | rRNA reads and strand-specificity
 
@@ -259,7 +261,7 @@ $ ftp ftp://ftp.ensembl.org/pub/release-90/fasta/mus_musculus/ncrna/Mus_musculus
 
 Utilizing UNIX commands manipulate the data to get rid of newline characters and pull out only rRNA.
 ```{.bash}
-$ awk '!/^>/ { printf "%s", $0; n = "\n" } /^>/ { print n $0; n = "" } END { printf "%s", n } ' Mus_musculus.GRCm38.ncrna.fa > results.txt
+$ awk "!/^>/ { printf "%s", $0; n = "\n" } /^>/ { print n $0; n = "" } END { printf "%s", n } " Mus_musculus.GRCm38.ncrna.fa > results.txt
 
 $ grep -A 1 "rRNA" results.txt > mus_rRNA_seqs.fa
 ```
@@ -389,10 +391,13 @@ legend(77,6000, c("R1_17_3E A", "R1_17_3E T", "R2_17_3E A", "R2_17_3E T"), lty=c
 sums_17_R1 = c(sum(R1_17_3E_A$V1), sum(R1_17_3E_T$V1), sum(R2_17_3E_A$V1), sum(R2_17_3E_T$V1))
 ```
 
-```{r}
+```{r, message = FALSE}
+library(tidyverse)
+library(pander)
+
 Read <- rep(c(1, 2), 4)
-trt <- c(rep('10_2G_both', 4),rep('17_3E_fox', 4))
-poly <- rep(c(rep('A',2),rep('T',2)),2)
+trt <- c(rep("10_2G_both", 4),rep("17_3E_fox", 4))
+poly <- rep(c(rep("A", 2),rep("T", 2)), 2)
 occurences <- c(sum(R1_10_2G_A$V1), 
                 sum(R2_10_2G_A$V1), 
                 sum(R1_10_2G_T$V1), 
@@ -402,11 +407,12 @@ occurences <- c(sum(R1_10_2G_A$V1),
                 sum(R1_17_3E_T$V1), 
                 sum(R2_17_3E_T$V1))
 strd_table <- type_convert(as.tibble(cbind(Read, trt, poly, occurences)))
-ggplot(strd_table, aes(poly, occurences, fill = as.factor(Read))) +
-    geom_col(position = position_dodge()) +
-    facet_grid(~trt) +
-    labs(x = '', y = 'Total Occurences of \nSequential Sequences 10<n>101', color = "Legend Title\n") +
-    theme_light() 
+ggplot(strd_table, 
+       aes(poly, occurences, fill = as.factor(Read))) +
+       geom_col(position = position_dodge()) + 
+       facet_grid(~trt) +
+       labs(x = "", y = "Total Occurences of \nSequential Sequences 10<n>101") +
+       theme_light() 
 ```
 
 The facets of this barplot display different patterns. The plot to the right (17_3E) shows that R1 has more poly T occurences and that R2 has more poly A occurrences. The scale is a bit off for the 17_3E plot because 10_2G began with way more reads. With the 10_2G plot we see what we saw in the 17_3E plot--that R1 has more poly T occurences and that R2 has more poly A occurrences. We do, however, see more poly As in R1 as compared to R2. If we look at the line plot above, we can see that there are more poly A occurences in R2 where the poly A tail is 10<n>55 and 80<n>101. It would be interested to investigate this pattern further. The quality of the reads for R2 of the 10_2G sample were the lowest out of all four datasets. We expect the pattern that we see in the 17_3E plot as R1 is the reverse complement of the RNA strand, and R2 is the the RNA strand.  Poly T tails correspond to the reverse complement of the RNA and poly A tails correspond to the RNA strand. 
